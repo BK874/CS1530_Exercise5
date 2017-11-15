@@ -6,14 +6,13 @@ public class Pi{
     public static int numThrows = 0;
     public static int numSuccess = 0;
 
-    public static void monteCarlo(long iter){
-	int x = -1;
-	int y = -1;
+    public static synchronized void monteCarlo(long iter){
+	double x = -1.0;
+	double y = -1.0;
 	
 	for (int i = 0; i < iter; i++){
-	    x = ThreadLocalRandom.current().nextInt(0, 1);
-	    y = ThreadLocalRandom.current().nextInt(0, 1);
-	    //System.out.println("x: " + x + ", y: " + y);
+	    x = ThreadLocalRandom.current().nextDouble(0, 1);
+	    y = ThreadLocalRandom.current().nextDouble(0, 1);
 
 	    numThrows++;
 
