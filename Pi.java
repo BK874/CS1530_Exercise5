@@ -1,11 +1,12 @@
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.*;
 
 public class Pi{
 
-    public static int numThrows = 0;
-    public static int numSuccess = 0;
+    public static AtomicInteger numThrows = new AtomicInteger(0);
+    public static AtomicInteger numSuccess = new AtomicInteger(0);
 
-    public static synchronized void monteCarlo(long iter){
+    public static void monteCarlo(long iter){
 	double x = -1.0;
 	double y = -1.0;
 	
@@ -13,10 +14,10 @@ public class Pi{
 	    x = ThreadLocalRandom.current().nextDouble(0, 1);
 	    y = ThreadLocalRandom.current().nextDouble(0, 1);
 
-	    numThrows++;
+	    numThrows.incrementAndGet();
 
 	    if (x * x + y * y <= 1){
-		numSuccess++;
+		numSuccess.incrementAndGet();
 	    }
 	}
     }
@@ -29,6 +30,7 @@ public class Pi{
 	Thread myThreads[];
 	int x = -1;
 	int y = -1;
+	final Object ref = new Object();
 
 	try {
 	    numThreads = Integer.parseInt(args[0]);
@@ -46,7 +48,9 @@ public class Pi{
 
 	for (int i = 0; i < numThreads; i++){
 	    myThreads[i] = new Thread(() -> {
+		    //		    synchronized(ref){
 		    monteCarlo(numIter);
+		    
 		});
 	    myThreads[i].start();
 	}
@@ -60,8 +64,8 @@ public class Pi{
 
 	System.out.println("Total = " + numThrows);
 	System.out.println("Inside = " + numSuccess);
-	System.out.println("Ratio = " + (double)numSuccess/(double)numThrows);
-	System.out.println("Pi = " + 4 * (double)numSuccess/(double)numThrows);
+	System.out.println("Ratio = " + (AtomicDouble)numSuccess/(AtomicDouble)numThrows);
+	System.out.println("Pi = " + 4 * (AtomicDouble)numSuccess/(AtomicDouble)numThrows);
 	
 		
     }
